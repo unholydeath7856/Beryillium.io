@@ -1,3 +1,26 @@
+<?php
+$html = "";
+$conn = mysqli_connect("localhost","root","","beryillium.io");
+if(isset($_POST['name'])) {
+  $name = $_POST['name'];
+  $score = $_POST['score'];
+  $query = mysqli_query($conn,"INSERT INTO highscore (name,score) VALUES ('$name','$score')");
+  header('location: http://localhost/beryillium.io/redirect.php');
+}
+$sql = "SELECT * FROM highscore ORDER BY score DESC LIMIT 10";
+$query = mysqli_query($conn,$sql);
+if (mysqli_num_rows($query)) {
+  while ($row = mysqli_fetch_assoc($query)) {
+    $name = $row['name'];
+    $score = $row['score'];
+    $html .= '<tr><td>'.$name.'</td><td>'.$score.'</td></tr>';
+  }
+}
+
+
+
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -18,11 +41,22 @@
           <ul class="options">
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.main()">Quit</li>
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.new()">Restart</li>
-            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="">Highscores</li>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.highmenu()">Highscores</li>
           </ul>
         </div>
       </div>
 
+      <div class="highscoreMenu pannel-container">
+        <div class="pannel">
+          <h2 class="pannel-title">Highscores</h2>
+          <ul class="options">
+            <table style="width:80%; margin-right:10%; margin-left:10%">
+              <?php echo($html); ?>
+            </table>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.main()">Back</li>
+          </ul>
+        </div>
+      </div>
 
       <div class="pauseMenu pannel-container">
         <div class="pannel">
@@ -42,7 +76,7 @@
           <ul class="options">
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.new()">New Game</li>
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.settings()">Settings</li>
-            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="">Highscores</li>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.highmenu()">Highscores</li>
           </ul>
         </div>
       </div>
@@ -51,8 +85,11 @@
         <div class="pannel">
           <h3 class="pannel-title">Insert Name</h3>
           <ul class="options">
-            <li class="option" ><input id="name" type="text" onkeyup="beryilliumApp.name()" name="name" placeholder="insert name..."></li>
-            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);"><input id="nameinput" onclick="beryilliumApp.highscore()" type="button" name="next" disabled="true" value="Next"></li>
+            <form class="highscore-submit" action="index.php" method="post">
+              <li class="option" ><input id="name" type="text" onkeyup="beryilliumApp.name()" name="name" placeholder="insert name..."></li>
+              <li class="option"><input id="score-dummy" type="hidden" name="score" value=""></li>
+              <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);"><input id="nameinput" onclick="beryilliumApp.highscore()" type="submit" name="next" disabled="true" value="Next"></li>
+            </form>
           </ul>
         </div>
       </div>

@@ -77,6 +77,11 @@ var beryilliumApp = (function ($) {
     window.clearInterval(intervalID);
   }
 
+  var highscoreMenu = function () {
+    $('.pannel-container').slideUp();
+    $('.highscoreMenu').slideToggle();
+  }
+
   var endMenu = function () {
     $('.pannel-container').slideUp();
     $('.score').text("Your Score Was: " + score);
@@ -206,6 +211,7 @@ var beryilliumApp = (function ($) {
 
   var skillIncrease = function () {
     score++;
+    $("#score-dummy").val(score);
     hits ++;
     ignition();
     if (hits == 3) {
@@ -229,7 +235,8 @@ var beryilliumApp = (function ($) {
     back: resume,
     stop: stopGame,
     name: testForName,
-    highscore: toHighScore
+    highscore: toHighScore,
+    highmenu: highscoreMenu
   };
 
 })(jQuery);
