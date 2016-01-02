@@ -1,3 +1,5 @@
+var intervalID;
+var inGame = false;
 var beryilliumApp = (function ($) {
   var canvas = document.getElementById('mycanvas');
   var ctx = canvas.getContext("2d");
@@ -7,15 +9,14 @@ var beryilliumApp = (function ($) {
   var radius = 50;
   var hits = 0;
   var lives = 5;
-  var intervalID;
   var score = 0;
-  var intervalSet = setInterval(ignition, checkTime);
+  var nameString;
+  var highscore = [];
 
   //functions
   var ignition = function () {
     clean();
     draw();
-    window.setInterval(intervalSet,checkTime);
   }
 
   var draw = function () {
@@ -67,13 +68,13 @@ var beryilliumApp = (function ($) {
 
   var resume = function () {
     $('.pannel-container').slideUp();
-    window.setInterval(intervalSet,checkTime);
+    intervalID = window.setInterval(ignition,checkTime);
   }
 
   var pauseMenu = function () {
     $('.pannel-container').slideUp();
     $('.pauseMenu').slideToggle();
-    window.clearInterval(intervalSet);
+    window.clearInterval(intervalID);
   }
 
   var endMenu = function () {
@@ -98,10 +99,32 @@ var beryilliumApp = (function ($) {
   }
 
   var newGame = function () {
+    inGame = true
+    intervalID = window.setInterval(ignition, checkTime);
     $('.pannel-container').slideUp();
     reset();
     ignition();
-    window.setInterval(intervalSet,checkTime);
+  }
+
+  var toHighScore = function() {
+    gameResult = {player: nameString, points: score};
+    highscore.push(gameResult);
+    highscore.sort(function (a,b) {
+      return (b.points - a.score)
+    });
+    console.log(highscore);
+    mainMenu();
+  }
+
+  var testForName = function () {
+    nameString = $('#name').val();
+    if (nameString.length > 0) {
+      $('#nameinput').removeAttr('disabled');
+      $('#nameinput').css("cursor","pointer");
+    } else {
+      $('#nameinput').css("cursor","default");
+      $('#nameinput').prop('disabled','disabled');
+    }
   }
 
   var testForRandom = function () {
@@ -140,29 +163,41 @@ var beryilliumApp = (function ($) {
     ctx.fillText("-1 Life",150,300);
     var timeout = setTimeout(function () {
       $(canvas).css("background-color","white");
+      ignition();
     }, 300);
   }
 
   var lifeCheck = function () {
       if (lives == 0) {
+        inGame = false;
         stop();
       }
       console.log(lives);
   }
 
   var stop = function () {
-    window.clearInterval(intervalSet);
+    window.clearInterval(intervalID);
     clean();
-    endMenu();
+    name();
+  }
+
+  var stopGame = function () {
+    window.clearInterval(intervalID);
+    clean();
+    name();
+  }
+
+  var name = function () {
+    $('.nameMenu').slideToggle();
   }
 
   var reset = function () {
     hits = 0;
     lives = 5;
     radius = 50;
-    checkTime = 5000;
+    checkTime = checkTime;
     score = 0;
-    window.clearInterval(intervalSet);
+    window.clearInterval(intervalID);
   }
 
   var distanceFormula = function (x1,x2,y1,y2) {
@@ -172,8 +207,7 @@ var beryilliumApp = (function ($) {
   var skillIncrease = function () {
     score++;
     hits ++;
-    clean();
-    draw();
+    ignition();
     if (hits == 3) {
       hits = 0;
       radius -= 1;
@@ -192,7 +226,10 @@ var beryilliumApp = (function ($) {
     new: newGame,
     settings: settingsMenu,
     color: testForRandom,
-    back: resume
+    back: resume,
+    stop: stopGame,
+    name: testForName,
+    highscore: toHighScore
   };
 
 })(jQuery);
@@ -200,4 +237,7 @@ var beryilliumApp = (function ($) {
 $(document).ready(function () {
   var canvas = document.getElementById('mycanvas');
   beryilliumApp.main();
+  if (inGame) {
+    intervalID = window.setInterval(beryilliumApp.start,checkTime);
+  }
 });

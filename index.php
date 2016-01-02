@@ -11,9 +11,6 @@
     </header>
 
     <div class="game">
-      <div class="pause">
-        <img src="Assets/Images/pause.jpg" onclick="beryilliumApp.pause()" alt="pause" />
-      </div>
       <div class="endMenu pannel-container">
         <div class="pannel">
           <h2 class="pannel-title">Game Over</h2>
@@ -32,8 +29,9 @@
           <h2 class="pannel-title">Paused</h2>
           <ul class="options">
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this)" onclick="beryilliumApp.back()">Resume</li>
-            <li class="option" onmouseover="" onmouseout="" onclick="">Restart</li>
-            <li class="option" onmouseover="" onmouseout="" onclick="">Highscores</li>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this)" onclick="beryilliumApp.new()">Restart</li>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this)" onclick="">Highscores</li>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.stop()">Quit</li>
           </ul>
         </div>
       </div>
@@ -45,6 +43,16 @@
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.new()">New Game</li>
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.settings()">Settings</li>
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="">Highscores</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nameMenu pannel-container">
+        <div class="pannel">
+          <h3 class="pannel-title">Insert Name</h3>
+          <ul class="options">
+            <li class="option" ><input id="name" type="text" onkeyup="beryilliumApp.name()" name="name" placeholder="insert name..."></li>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);"><input id="nameinput" onclick="beryilliumApp.highscore()" type="button" name="next" disabled="true" value="Next"></li>
           </ul>
         </div>
       </div>
@@ -68,6 +76,9 @@
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.main()">Back</li>
           </ul>
         </div>
+      </div>
+      <div class="pause">
+        <img src="Assets/Images/pause.jpg" onclick="beryilliumApp.pause()" alt="pause" />
       </div>
       <canvas id="mycanvas" width="600" height="600" onclick="beryilliumApp.hit(this,event)"></canvas>
     </div>
