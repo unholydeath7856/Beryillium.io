@@ -3,5 +3,19 @@ html,body {
   padding: 0;
 }
 
+.pause {
+  width: 100%;
+  display: block;
+  position: fixed;
+  margin: 0 auto;
+  img {
+    display: block;
+    margin: 0 auto;
+    width: 64px;
+    height: 64px;
+    cursor: pointer;
+  }
+}
+
 @import "1-tools/variables.scss";
 @import "3-modules/menu.scss";

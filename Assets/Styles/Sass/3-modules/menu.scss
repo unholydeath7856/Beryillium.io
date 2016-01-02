@@ -36,13 +36,23 @@
     .options {
       list-style: none;
       padding:0;
-      padding-left:40px;
+      padding-left:80px;
       font-family:$font-family;
       font-size: 18px;
       text-align: left;
       .option {
         margin-top:15px;
         cursor: pointer;
+        label {
+          cursor: pointer;
+          padding-left: 10px;
+        }
+        select {
+          span {
+            height: 5px;
+            width: 10px;
+          }
+        }
       }
     }
   }

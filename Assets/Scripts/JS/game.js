@@ -15,12 +15,37 @@ var beryilliumApp = (function ($) {
   var ignition = function () {
     clean();
     draw();
+    window.setInterval(intervalSet,checkTime);
   }
 
   var draw = function () {
+    color = $('#color-select option:selected').text();
     centerX = Math.floor(Math.random()*(600)+1);
     centerY = Math.floor(Math.random()*(600)+1);
-    ctx.strokeStyle = "#" + Math.floor(Math.random()*0xFFFFFF).toString(16);
+    if (($('#random').prop('checked')==true)) {
+      ctx.strokeStyle = "#" + Math.floor(Math.random()*0xFFFFFF).toString(16);
+    }
+    else if (($('#random').prop('checked') == false) && color == "Red") {
+      ctx.strokeStyle = "#FF0000";
+    }
+    else if (($('#random').prop('checked') == false) && color == "Orange") {
+      ctx.strokeStyle = "#FF7F00";
+    }
+    else if (($('#random').prop('checked') == false) && color == "Yellow") {
+      ctx.strokeStyle = "#FFFF00";
+    }
+    else if (($('#random').prop('checked') == false) && color == "Green") {
+      ctx.strokeStyle = "#00FF00";
+    }
+    else if (($('#random').prop('checked') == false) && color == "Blue") {
+      ctx.strokeStyle = "#0000FF";
+    }
+    else if (($('#random').prop('checked') == false) && color == "Indigo") {
+      ctx.strokeStyle = "#4B0082";
+    }
+    else if (($('#random').prop('checked') == false) && color == "Violet") {
+      ctx.strokeStyle = "#8B00FF";
+    }
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
     ctx.stroke();
@@ -40,9 +65,15 @@ var beryilliumApp = (function ($) {
     }
   }
 
+  var resume = function () {
+    $('.pannel-container').slideUp();
+    window.setInterval(intervalSet,checkTime);
+  }
+
   var pauseMenu = function () {
     $('.pannel-container').slideUp();
     $('.pauseMenu').slideToggle();
+    window.clearInterval(intervalSet);
   }
 
   var endMenu = function () {
@@ -52,7 +83,8 @@ var beryilliumApp = (function ($) {
   }
 
   var settingsMenu = function () {
-
+    $('.pannel-container').slideUp();
+    $('.settingsMenu').slideToggle();
   }
 
   var mainMenu = function () {
@@ -69,7 +101,15 @@ var beryilliumApp = (function ($) {
     $('.pannel-container').slideUp();
     reset();
     ignition();
-    window.setInterval(ignition,checkTime);
+    window.setInterval(intervalSet,checkTime);
+  }
+
+  var testForRandom = function () {
+    if ($('#random').prop('checked')) {
+      $('#color-select').prop('disabled','disabled');
+    } else {
+      $('#color-select').removeAttr('disabled')
+    }
   }
 
   var getMousePos = function (canvas2, event) {
@@ -104,7 +144,7 @@ var beryilliumApp = (function ($) {
   }
 
   var lifeCheck = function () {
-      if (lives <= 0) {
+      if (lives == 0) {
         stop();
       }
       console.log(lives);
@@ -144,14 +184,15 @@ var beryilliumApp = (function ($) {
   //methods
   return {
     start: ignition,
-    clock: intervalSet,
     hit: checkClick,
     hover: hoverColor,
     pause: pauseMenu,
     end: endMenu,
     main: mainMenu,
     new: newGame,
-    settings: settingsMenu
+    settings: settingsMenu,
+    color: testForRandom,
+    back: resume
   };
 
 })(jQuery);
