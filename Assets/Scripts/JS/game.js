@@ -13,18 +13,26 @@ var beryilliumApp = (function ($) {
   var score = 0;
   var nameString;
   var highscore = [];
+  var shape = "circle";
+  var x1;
+  var x2;
+  var y1;
+  var y2;
+  var x3;
+  var y3;
 
   //functions
   var ignition = function () {
     drawLives();
     clean();
-    draw();
+    draw(shape);
   }
 
-  var draw = function () {
+  var getShape = function () {
+    shape = $('input[name=shape]:checked').val();
+  }
+  var draw = function (shape) {
     color = $('#color-select option:selected').text();
-    centerX = Math.floor(Math.random()*(600)+1);
-    centerY = Math.floor(Math.random()*(600)+1);
     if (($('#random').prop('checked')==true)) {
       ctx.strokeStyle = "#" + Math.floor(Math.random()*0xFFFFFF).toString(16);
     }
@@ -49,11 +57,43 @@ var beryilliumApp = (function ($) {
     else if (($('#random').prop('checked') == false) && color == "Violet") {
       ctx.strokeStyle = "#8B00FF";
     }
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
-    ctx.stroke();
-    ctx.fillStyle = ctx.strokeStyle;
-    ctx.fill();
+    if (shape == "circle") {
+      centerX = radius + Math.floor(Math.random()*(600 - radius*2)+1);
+      centerY = radius + Math.floor(Math.random()*(600 - radius*2)+1);
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
+      ctx.stroke();
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fill();
+    }
+
+    if (shape == "square") {
+      x1 = Math.floor(Math.random()*(600 - radius*2)+1);
+      y1 = Math.floor(Math.random()*(600 - radius*2)+1);
+      x2 = radius * 2;
+      y2 = radius * 2;
+      ctx.beginPath();
+      ctx.rect(x1,y1,x2,y2);
+      ctx.stroke();
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fill();
+    }
+
+    if (shape == "triangle") {
+      x1 = Math.floor(Math.random()*(600 - radius*2)+1);
+      y1 = radius*2 + Math.floor(Math.random()*(600 - radius*2)+1);
+      x2 = x1 + radius*2;
+      y2 = y1;
+      x3 = x1 + (radius*2/2);
+      y3 = y1 - (radius*2 * Math.sqrt(3/4));
+        ctx.beginPath();
+        ctx.moveTo(x1,y1);
+        ctx.lineTo(x2,y2);
+        ctx.lineTo(x3,y3);
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.fill();
+    }
+
     ctx.font = "16px Monospace";
     ctx.fillText("Score:"+ score, 500,16);
   }
@@ -168,16 +208,47 @@ var beryilliumApp = (function ($) {
 
   var checkClick = function (canvas2, event) {
     var mousePos = getMousePos(canvas2,event);
-    var distance = distanceFormula(centerX, mousePos.x, centerY, mousePos.y);
-    if (distance <= radius) {
-      skillIncrease();
-    } else {
-      lives --;
-      flashRed();
-      lifeCheck();
-      drawLives();
+    var distance;
+    if (shape == "circle") {
+      distance = distanceFormula(centerX, mousePos.x, centerY, mousePos.y);
+      if (distance <= radius) {
+        skillIncrease();
+      } else {
+        lives --;
+        flashRed();
+        lifeCheck();
+        drawLives();
+      }
+    } else if (shape == "square") {
+      if (mousePos.x <= x1+x2 && mousePos.x >= x1) {
+        if (mousePos.y <= y1 + y2 && mousePos.y >= y1) {
+          skillIncrease();
+        }
+      } else {
+        lives --;
+        flashRed();
+        lifeCheck();
+        drawLives();
+      }
+    } else if (shape == "triangle") {
+      var planeAB = (x1-mousePos.x)*(y2-mousePos.y)-(x2-mousePos.x)*(y1-mousePos.y);
+			var planeBC = (x2-mousePos.x)*(y3-mousePos.y)-(x3-mousePos.x)*(y2-mousePos.y);
+			var planeCA = (x3-mousePos.x)*(y1-mousePos.y)-(x1-mousePos.x)*(y3-mousePos.y);
+      var hit = sign(planeAB)==sign(planeBC) && sign(planeBC)==sign(planeCA);
+      if (hit) {
+        skillIncrease();
+      } else {
+        lives --;
+        flashRed();
+        lifeCheck();
+        drawLives();
+      }
     }
   }
+
+  function sign(n) {
+		return Math.sign(n);
+	}
 
   var flashRed = function () {
     $(canvas).css("background-color","#ec9db0");
@@ -196,7 +267,6 @@ var beryilliumApp = (function ($) {
         inGame = false;
         stop();
       }
-      console.log(lives);
   }
 
   var stop = function () {
@@ -235,8 +305,12 @@ var beryilliumApp = (function ($) {
     ignition();
     if (hits == 3) {
       hits = 0;
-      radius -= 1;
-      checkTime -= 10;
+      if (radius != 10) {
+        radius -= 1;
+      }
+      if (checkTime != 750) {
+        checkTime -= 50;
+      }
     }
   }
 
@@ -260,7 +334,8 @@ var beryilliumApp = (function ($) {
     name: testForName,
     highscore: toHighScore,
     highmenu: highscoreMenu,
-    clearPage: removePage
+    clearPage: removePage,
+    styleShape: getShape
   };
 
 })(jQuery);

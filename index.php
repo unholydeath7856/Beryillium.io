@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ERROR);
 $pagination ="";
 $html = "";
 $conn = mysqli_connect("localhost","root","","beryillium.io");
@@ -130,7 +131,7 @@ if (mysqli_num_rows($query)) {
           <h3 class="pannel-title">Settings</h3>
           <ul class="options">
             <li class="option" onclick=""><input id="random" onclick="beryilliumApp.color()" type="checkbox" checked="true" name="random" value="checked"><label onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.color()" for="random">Random Colors?</label></li>
-            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);">
+            <li class="option" onmouseover="beryilliumApp.hover(true,this);" onmouseout="beryilliumApp.hover(false,this);">
               <select id="color-select" name="color" disabled="true">
                 <option value="option"><span class="red"></span>Red</option>
                 <option value="option"><span class="orange"></span>Orange</option>
@@ -140,7 +141,12 @@ if (mysqli_num_rows($query)) {
                 <option value="option"><span class="indigo"></span>Indigo</option>
                 <option value="option"><span class="violet"></span>Violet</option>
               </select><label for="color-select">Color</label>
+              <br>
+              <br>
             </li>
+            <img src="Assets/Images/Square.jpg" alt="Square" /><input id="shape" type="radio" name="shape" value="square" onclick="beryilliumApp.styleShape();"><label for="shape" onclick="beryilliumApp.styleShape();" onmouseover="beryilliumApp.hover(true,this);" onmouseout="beryilliumApp.hover(false,this);">Square</label><br><br>
+            <img src="Assets/Images/Triangle.png" alt="Square" /><input id="shape2" type="radio" name="shape" value="triangle" onclick="beryilliumApp.styleShape();"><label for="shape2" onclick="beryilliumApp.styleShape();" onmouseover="beryilliumApp.hover(true,this);" onmouseout="beryilliumApp.hover(false,this);">Triangle</label><br><br>
+            <img src="Assets/Images/Circle.png" alt="Square" /><input id="shape3" type="radio" name="shape" checked="checked" value="circle" onclick="beryilliumApp.styleShape();"><label for="shape3" onclick="beryilliumApp.styleShape();" onmouseover="beryilliumApp.hover(true,this);" onmouseout="beryilliumApp.hover(false,this);">Circle</label><br><br>
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.main()">Back</li>
           </ul>
         </div>
