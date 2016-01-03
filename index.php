@@ -1,4 +1,5 @@
 <?php
+$pagination ="";
 $html = "";
 $conn = mysqli_connect("localhost","root","","beryillium.io");
 if(isset($_POST['name'])) {
@@ -7,8 +8,38 @@ if(isset($_POST['name'])) {
   $query = mysqli_query($conn,"INSERT INTO highscore (name,score) VALUES ('$name','$score')");
   header('location: http://localhost/beryillium.io/redirect.php');
 }
-$sql = "SELECT * FROM highscore ORDER BY score DESC LIMIT 10";
-$query = mysqli_query($conn,$sql);
+$count_query = mysqli_query($conn,"SELECT NULL FROM highscore");
+$count = mysqli_num_rows($count_query);
+
+//pagination
+if (isset($_GET['page'])) {
+  $page = preg_replace("#[^0-9]#","",$_GET['page']);
+
+} else {
+  $page = 1;
+}
+$perPage = 10;
+$lastPage = ceil($count/$perPage);
+
+if($page < 1) {
+  $page = 1;
+} else if ($page > $lastPage) {
+  $page = $lastPage;
+}
+
+if($lastPage != 1) {
+  if ($page != $lastPage) {
+    $next = $page + 1;
+    $pagination.='<a href="index.php?page='.$next.'">Next</a>';
+  }
+  if ($page != 1) {
+    $prev = $page - 1;
+    $pagination.='<a href="index.php?page='.$prev.'">Previous</a>';
+  }
+}
+
+$limit = "LIMIT ".($page - 1)*$perPage.", $perPage";
+$query = mysqli_query($conn,"SELECT * FROM highscore ORDER BY score DESC $limit");
 if (mysqli_num_rows($query)) {
   while ($row = mysqli_fetch_assoc($query)) {
     $name = $row['name'];
@@ -16,7 +47,6 @@ if (mysqli_num_rows($query)) {
     $html .= '<tr><td>'.$name.'</td><td>'.$score.'</td></tr>';
   }
 }
-
 
 
 ?>
@@ -53,7 +83,8 @@ if (mysqli_num_rows($query)) {
             <table style="width:80%; margin-right:10%; margin-left:10%">
               <?php echo($html); ?>
             </table>
-            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.main()">Back</li>
+            <?php echo($pagination); ?>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.main(); beryilliumApp.clearPage();">Back</li>
           </ul>
         </div>
       </div>
@@ -64,7 +95,7 @@ if (mysqli_num_rows($query)) {
           <ul class="options">
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this)" onclick="beryilliumApp.back()">Resume</li>
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this)" onclick="beryilliumApp.new()">Restart</li>
-            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this)" onclick="">Highscores</li>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this)" onclick="beryilliumApp.highmenu()">Highscores</li>
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.stop()">Quit</li>
           </ul>
         </div>
@@ -74,7 +105,7 @@ if (mysqli_num_rows($query)) {
         <div class="pannel">
           <h3 class="pannel-title">Beryillium.io</h3>
           <ul class="options">
-            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.new()">New Game</li>
+            <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.new(); intervalID = window.setInterval(beryilliumApp.start,checkTime);">New Game</li>
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.settings()">Settings</li>
             <li class="option" onmouseover="beryilliumApp.hover(true,this)" onmouseout="beryilliumApp.hover(false,this);" onclick="beryilliumApp.highmenu()">Highscores</li>
           </ul>

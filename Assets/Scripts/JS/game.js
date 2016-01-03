@@ -1,9 +1,10 @@
 var intervalID;
 var inGame = false;
+var checkTime;
 var beryilliumApp = (function ($) {
   var canvas = document.getElementById('mycanvas');
   var ctx = canvas.getContext("2d");
-  var checkTime = 5000;
+  checkTime = 5000;
   var centerX = Math.floor(Math.random()*(600)+1);
   var centerY = Math.floor(Math.random()*(600)+1);
   var radius = 50;
@@ -15,6 +16,7 @@ var beryilliumApp = (function ($) {
 
   //functions
   var ignition = function () {
+    drawLives();
     clean();
     draw();
   }
@@ -117,7 +119,6 @@ var beryilliumApp = (function ($) {
     highscore.sort(function (a,b) {
       return (b.points - a.score)
     });
-    console.log(highscore);
     mainMenu();
   }
 
@@ -148,6 +149,23 @@ var beryilliumApp = (function ($) {
     };
   }
 
+  var drawLives = function () {
+    var imgArray = [];
+    for (var i = 0; i < lives; i++) {
+      imgArray[i] = [];
+      (function (_i) {
+          var xPos = (_i+1)*35;
+          var yPos = 10;
+          imgArray[_i] = new Image();
+          imgArray[_i].src = "Assets/Images/heart.jpg";
+          imgArray[_i].onload = function () {
+            ctx.globalCompositeOperation = "source-over";
+            ctx.drawImage(imgArray[_i], xPos, yPos);
+          };
+      })(i);
+    }
+  }
+
   var checkClick = function (canvas2, event) {
     var mousePos = getMousePos(canvas2,event);
     var distance = distanceFormula(centerX, mousePos.x, centerY, mousePos.y);
@@ -157,6 +175,7 @@ var beryilliumApp = (function ($) {
       lives --;
       flashRed();
       lifeCheck();
+      drawLives();
     }
   }
 
@@ -221,6 +240,10 @@ var beryilliumApp = (function ($) {
     }
   }
 
+  var removePage = function () {
+    window.location.assign("http://localhost/beryillium.io/index.php");
+  }
+
   //methods
   return {
     start: ignition,
@@ -236,15 +259,17 @@ var beryilliumApp = (function ($) {
     stop: stopGame,
     name: testForName,
     highscore: toHighScore,
-    highmenu: highscoreMenu
+    highmenu: highscoreMenu,
+    clearPage: removePage
   };
 
 })(jQuery);
 
 $(document).ready(function () {
   var canvas = document.getElementById('mycanvas');
-  beryilliumApp.main();
-  if (inGame) {
-    intervalID = window.setInterval(beryilliumApp.start,checkTime);
+  if (window.location.href.indexOf("page") > -1) {
+    beryilliumApp.highmenu();
+  } else {
+    beryilliumApp.main();
   }
 });
